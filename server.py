@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import torch
-from trainModel import ClassificationModel  # Import your model definition
+from model import ClassificationModel  # Import your model definition
 from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
