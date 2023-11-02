@@ -10,16 +10,10 @@ app = Flask(__name__)
 input_dim = 8
 output_dim = 2
 categorical_columns = ['gender', 'smoking_history']
-device = (
-    "cuda"
-    if torch.cuda.is_available()
-    else "cpu"
-)
 
 model = ClassificationModel(input_dim, output_dim)
 model.load_state_dict(torch.load('model.pth'))
 model.eval()
-
 
 # Endpoint to handle predictions
 @app.route('/predict', methods=['POST'])
@@ -46,13 +40,10 @@ def predict():
     input_tensor = torch.tensor(input_data.values, dtype=torch.float32)
 
     # Ensure the tensor is on the correct device
-    input_tensor = input_tensor.to(device)
+    input_tensor = input_tensor
 
     # Forward pass (prediction)
     with torch.no_grad():
-        # Ensure the model is on the correct device
-        model.to(device)
-
         predictions = model(input_tensor)
 
     # Convert the predictions to probabilities using softmax
@@ -72,4 +63,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run()

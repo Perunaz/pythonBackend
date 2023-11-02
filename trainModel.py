@@ -7,15 +7,6 @@ from torch.optim.lr_scheduler import StepLR
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-device = (
-    "cuda"
-    if torch.cuda.is_available()
-    else "mps"
-    if torch.backends.mps.is_available()
-    else "cpu"
-)
-print(f"Using {device} device")
-
 # Step 1: Load and preprocess the dataset
 data = pd.read_csv('diabetes_prediction_dataset.csv')
 
@@ -34,8 +25,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_
 
 class CustomDataset(Dataset):
     def __init__(self, X, y):
-        self.X = torch.tensor(X.values, dtype=torch.float32).to(device)
-        self.y = torch.tensor(y.values, dtype=torch.long).to(device)
+        self.X = torch.tensor(X.values, dtype=torch.float32)
+        self.y = torch.tensor(y.values, dtype=torch.long)
 
     def __len__(self):
         return len(self.X)
@@ -53,15 +44,10 @@ test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 class ClassificationModel(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(ClassificationModel, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 1024)
+        self.fc1 = nn.Linear(input_dim, 256)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(1024, 1024)
-        self.relu = nn.ReLU()
-        self.fc3 = nn.Linear(1024, 1024)
-        self.relu = nn.ReLU()
-        self.fc4 = nn.Linear(1024, 1024)
-        self.relu = nn.ReLU()
-        self.fc5 = nn.Linear(1024, output_dim)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
@@ -70,17 +56,12 @@ class ClassificationModel(nn.Module):
         x = self.fc2(x)
         x = self.relu(x)
         x = self.fc3(x)
-        x = self.relu(x)
-        x = self.fc4(x)
-        x = self.relu(x)
-        x = self.fc5(x)
         x = self.softmax(x)
         return x
 
 input_dim = X_train.shape[1]
 output_dim = len(data['diabetes'].unique())
 model = ClassificationModel(input_dim, output_dim)
-model = model.to(device)
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -131,4 +112,4 @@ for epoch in range(num_epochs):
     # Update learning rate
     scheduler.step()
 
-torch.save(model.state_dict(), 'testmodel.pth')
+torch.save(model.state_dict(), 'model1.pth')
