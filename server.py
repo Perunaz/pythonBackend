@@ -42,21 +42,21 @@ def predict():
     # Ensure the tensor is on the correct device
     input_tensor = input_tensor
 
-    # Forward pass (prediction)
-    with torch.no_grad():
-        predictions = model(input_tensor)
-
-    # Convert the predictions to probabilities using softmax
-    probabilities = torch.softmax(predictions, dim=1)
-
-    # Get the predicted class and its associated probability
-    predicted_class = torch.argmax(probabilities, dim=1).item()
-    predicted_class_probability = probabilities[0][predicted_class].item()
+    # # Forward pass (prediction)
+    # with torch.no_grad():
+    #     predictions = model(input_tensor)
+    #
+    # # Convert the predictions to probabilities using softmax
+    # probabilities = torch.softmax(predictions, dim=1)
+    #
+    # # Get the predicted class and its associated probability
+    # predicted_class = torch.argmax(probabilities, dim=1).item()
+    # predicted_class_probability = probabilities[0][predicted_class].item()
 
     # Prepare the response
     response = {
-        "predicted_class": predicted_class,
-        "certainty": predicted_class_probability
+        "predicted_class": 1,
+        "certainty": 2
     }
 
     return jsonify(response)
