@@ -6,7 +6,7 @@ from model import ClassificationModel  # Import your model definition
 from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*", "headers": "Content-Security-Policy, upgrade-insecure-requests"}})
+CORS(app)
 
 # Load the pre-trained model
 input_dim = 8
