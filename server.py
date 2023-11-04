@@ -6,7 +6,7 @@ from model import ClassificationModel  # Import your model definition
 from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:4200/", "https://good-vs-bad.vercel.app/", "https://bad-good-vs-bad.vercel.app/"]}})
 
 # Load the pre-trained model
 input_dim = 8
