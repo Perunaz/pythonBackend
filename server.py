@@ -1,25 +1,26 @@
+import numpy as np
+import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pandas as pd
-import torch
-from model import ClassificationModel  # Import your model definition
+from model import Model  # Import your model definition
 from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
 CORS(app)
 
-# Load the pre-trained model
-input_dim = 8
-output_dim = 2
+model_instance = Model()
+
+# Create LabelEncoders for categorical columns
+label_encoders = {}
 categorical_columns = ['gender', 'smoking_history']
 
-model = ClassificationModel(input_dim, output_dim)
-model.load_state_dict(torch.load('model.pth'))
-model.eval()
+for col in categorical_columns:
+    le = LabelEncoder()
+    label_encoders[col] = le
 
 # Endpoint to handle predictions
 @app.route('/predict', methods=['POST'])
-def predict():
+def prediction():
     # Retrieve the input data from the POST request
     data = request.get_json()
 
@@ -38,28 +39,21 @@ def predict():
         input_data[col] = le.fit_transform(input_data[col])
         label_encoders[col] = le
 
-    # Convert the input data to a tensor and move it to the appropriate device
-    input_tensor = torch.tensor(input_data.values, dtype=torch.float32)
+    # Convert the input data into a NumPy array
+    data_array = np.array(input_data)
 
-    # Forward pass (prediction)
-    with torch.no_grad():
-        predictions = model(input_tensor)
+    # Make the prediction
+    prediction, certainty = model_instance.predict(data_array)
 
-    # Convert the predictions to probabilities using softmax
-    probabilities = torch.softmax(predictions, dim=1)
+    certainty_value = certainty[0]
+    prediction_value = float(prediction[0])
 
-    # Get the predicted class and its associated probability
-    predicted_class = torch.argmax(probabilities, dim=1).item()
-    predicted_class_probability = probabilities[0][predicted_class].item()
-
-    # Prepare the response
     response = {
-        "predicted_class": predicted_class,
-        "certainty": predicted_class_probability
+        "predicted_class": prediction_value,
+        "certainty": certainty_value
     }
 
     return jsonify(response)
 
-
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="127.0.0.1", port=5000)

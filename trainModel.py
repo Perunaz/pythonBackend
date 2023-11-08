@@ -112,4 +112,4 @@ for epoch in range(num_epochs):
     # Update learning rate
     scheduler.step()
 
-torch.save(model.state_dict(), 'model1.pth')
+torch.save(model.state_dict(), 'model.pth')
