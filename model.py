@@ -25,7 +25,7 @@ class Model:
             data[col] = le.fit_transform(data[col])
             label_encoders[col] = le
 
-        data = pd.concat([data.iloc[:, 0:20], data.iloc[:, -1]], axis=1)
+        data = pd.concat([data, data.iloc[:, -1]], axis=1)
 
         X = data.drop("diabetes", axis=1).to_numpy()
         y = data["diabetes"].to_numpy()

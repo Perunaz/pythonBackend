@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from model import Model  # Import your model definition
 from sklearn.preprocessing import LabelEncoder
@@ -17,6 +17,10 @@ categorical_columns = ['gender', 'smoking_history']
 for col in categorical_columns:
     le = LabelEncoder()
     label_encoders[col] = le
+
+@app.route("/image", methods=["GET"])
+def handle_image_request():
+    return send_file("./temp.png", mimetype="image/png")
 
 # Endpoint to handle predictions
 @app.route('/predict', methods=['POST'])
